@@ -3,13 +3,14 @@ package main
 import (
 	"net/http"
 	"log"
+	"github.com/gorilla/mux"
 )
 
 func main()	{
-	mux:= http.NewServeMux()
-	mux.HandleFunc("/",home)
+	r:= mux.NewRouter()
+	r.HandleFunc("/",home)
 	log.Println("Starting server on port 8080")
-	err:= http.ListenAndServe(":8080",mux)
+	err:= http.ListenAndServe(":8080",r)
 	if err != nil {
 		log.Fatal(err)
 	}
