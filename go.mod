@@ -1,4 +1,4 @@
-module main
+module github.com/go-programs/key-value-store
 
 go 1.18
 

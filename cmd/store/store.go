@@ -1,4 +1,4 @@
-package main
+package store
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ var store = map[string]string{
 	"user_b":"Cochin, Kerala",
 }
 
-func get(key string) (string, error) {
+func Get(key string) (string, error) {
 	v, ok := store[key]
 	if !ok {
 		return v, fmt.Errorf("Value not found")
@@ -17,33 +17,33 @@ func get(key string) (string, error) {
 	return v, nil
 }
 
-func put(key string, value string) {
+func Put(key string, value string) {
 	store[key] = value
 	return
 }
 
-func del(key string) {
+func Del(key string) {
 	delete(store, key)
 	return
 }
 
 func main() {
-	location_a, err := get("user_a")
+	location_a, err := Get("user_a")
 	if(err != nil) {
 		fmt.Println(err)
 	} else {
 		fmt.Println("Location of user_a:",location_a)
 	}
-	del("user_a")
+	Del("user_a")
 	fmt.Println("user_a details removed from key-value store")
-	location_a, err = get("user_a")
+	location_a, err = Get("user_a")
 	if(err != nil) {
 		fmt.Println(err)
 	} else {
 		fmt.Println("Location of user_a:",location_a)
 	}
-	put("user_c","Chennai, Tamilnadu")
-	location_c, err := get("user_c")
+	Put("user_c","Chennai, Tamilnadu")
+	location_c, err := Get("user_c")
 	if(err != nil) {
 		fmt.Println(err)
 	} else {
