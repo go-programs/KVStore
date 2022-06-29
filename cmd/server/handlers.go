@@ -3,7 +3,6 @@ package main
 
 import (
 	"net/http"
-	"log"
 	"io"
 	"github.com/gorilla/mux"
 	"github.com/go-programs/key-value-store/cmd/store"
@@ -23,8 +22,25 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 	v, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
 	if(err!=nil) {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	store.Put(vars["key"],string(v))
 	w.WriteHeader(http.StatusCreated)
+}
+
+func getHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	v, err := store.Get(vars["key"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte(v))
+}
+
+func delHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	store.Del(vars["key"])
+	w.WriteHeader(http.StatusOK)
 }
