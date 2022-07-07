@@ -10,7 +10,19 @@ var store = struct {
 	m map[string]string
 }{m: map[string]string{}}
 
-func Get(key string) (string, error) {
+type Service interface {
+	Get(string) (string, error)
+	Put(string, string)
+	Del(string)
+}
+
+type service struct {}
+
+func NewService() Service {
+	return &service{}
+}
+
+func (s *service) Get(key string) (string, error) {
 	store.RLock()
 	v, ok := store.m[key]
 	store.RUnlock()
@@ -20,14 +32,14 @@ func Get(key string) (string, error) {
 	return v, nil
 }
 
-func Put(key string, value string) {
+func (s *service) Put(key string, value string) {
 	store.Lock()
 	store.m[key] = value
 	store.Unlock()
 	return
 }
 
-func Del(key string) {
+func (s *service) Del(key string) {
 	store.Lock()
 	delete(store.m, key)
 	store.Unlock()
