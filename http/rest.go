@@ -1,12 +1,20 @@
-
-package main
+package http
 
 import (
 	"net/http"
 	"io"
 	"github.com/gorilla/mux"
-	"github.com/go-programs/key-value-store/cmd/store"
+	"github.com/go-programs/key-value-store/store"
 )
+
+func Handler() http.Handler {
+	r:= mux.NewRouter()
+	r.HandleFunc("/",home)
+	r.HandleFunc("/v1/key/{key}",putHandler).Methods("PUT")
+	r.HandleFunc("/v1/key/{key}",getHandler).Methods("GET")
+	r.HandleFunc("/v1/key/{key}",delHandler).Methods("DEL")
+	return r
+}
 
 func home(w http.ResponseWriter, r *http.Request) {
 	// Handling 404 error
