@@ -7,7 +7,12 @@ import (
 	kvstore "github.com/go-programs/key-value-store"
 )
 
-func Handler() http.Handler {
+var (
+	el kvstore.EventLogger
+)
+
+func Handler(eventLogger kvstore.EventLogger) http.Handler {
+	el = eventLogger
 	r:= mux.NewRouter()
 	r.HandleFunc("/",home)
 	r.HandleFunc("/v1/key/{key}",putHandler).Methods("PUT")
@@ -35,12 +40,14 @@ func putHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	kvstore.Put(vars["key"],string(v))
+	el.writePut(vars["key"],string(v))
 	w.WriteHeader(http.StatusCreated)
 }
 
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	v, err := kvstore.Get(vars["key"])
+	el.writeGet(vars["key"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -49,7 +56,8 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func delHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	kvstore.Del(vars["key"])
-	w.WriteHeader(http.StatusOK)
-}
+ 	vars := mux.Vars(r)
+ 	kvstore.Del(vars["key"])
+ 	el.writeDelete(vars["key"])
+ 	w.WriteHeader(http.StatusOK)
+ }
